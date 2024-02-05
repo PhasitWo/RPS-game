@@ -8,35 +8,32 @@ function displayMessage(message) {
     document.querySelector("ul").appendChild(el);
 }
 
-socket.on("create-room-status", (status, roomCode) => {
-    displayMessage(`you created room -> ${roomCode}`);
-    currentRoomCode = roomCode;
+socket.on("room-terminated", () => {
+    displayMessage(`you leave room -> ${currentRoomCode}`);
+    currentRoomCode = null;
 });
 
 socket.on("message-receive", (message, id) => {
-    if (socket.id === id) message = "*" + message
+    if (socket.id === id) message = "*" + message;
     displayMessage(message);
 });
 
 socket.on("choose", (callback) => {
     document.querySelector("#choose").onclick = () => {
         const text = document.querySelector("input").value;
-        callback(text)
+        callback(text);
         document.querySelector("input").value = "";
     };
-})
+});
 
-document.querySelector("#message").onclick = () => {
-    const text = document.querySelector("input").value;
-    if (text === "") return;
-    socket.emit("message-send", text, currentRoomCode);
-    document.querySelector("input").value = "";
-};
 
 document.querySelector("#create").onclick = () => {
     const text = document.querySelector("input").value;
-    socket.emit("create-room");
     document.querySelector("input").value = "";
+    socket.emit("create-room", (response) => {
+        currentRoomCode = response;
+        displayMessage(`you created room -> ${currentRoomCode}`);
+    });
 };
 
 document.querySelector("#join").onclick = () => {
