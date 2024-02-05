@@ -3,9 +3,11 @@ const socket = io("http://localhost:3000");
 var currentRoomCode = null;
 
 function displayMessage(message) {
-    const el = document.createElement("li");
-    el.innerHTML = message;
-    document.querySelector("ul").appendChild(el);
+    const div = document.createElement("div")
+    const container = document.getElementById("message-container");
+    div.textContent = message
+    container.append(div)
+    container.scrollTop = container.scrollHeight;
 }
 
 socket.on("room-terminated", () => {

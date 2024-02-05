@@ -3,6 +3,9 @@ var crypto = require("crypto");
 
 let rooms = [];
 
+// TODO: event on room-start, event on room-waiting, event on score(play animation)
+// TODO: mockup react state change
+
 io.on("connection", (socket) => {
     console.log(`${socket.id} connected to server`);
 
@@ -12,7 +15,6 @@ io.on("connection", (socket) => {
         rooms.push({ roomCode: roomCode, status: "running", player1: socket.id, player2: null });
         socket.join(roomCode);
         callback(roomCode);
-        // io.to(socket.id).emit("create-room-status", "ready", roomCode);
     });
 
     socket.on("join-room", (roomCode) => {
@@ -49,6 +51,7 @@ io.on("connection", (socket) => {
             .forEach((roomCode) => {
                 io.to(roomCode).emit("room-terminated");
                 io.socketsLeave(roomCode);
+                console.log(`${roomCode} terminated`)
                 // remove room from memory
                 let roomIndex = rooms.findIndex((obj) => {
                     return obj.roomCode === roomCode;
@@ -66,6 +69,8 @@ io.on("connection", (socket) => {
         let p2Score = 0;
         let p1Choice = null;
         let p2Choice = null;
+        let evenCnt = 0;
+        const maxEvenCnt = 3;
         while (p1Score < 3 && p2Score < 3) {
             console.log(room.status);
             if (room.status === "terminated") return;
@@ -111,8 +116,15 @@ io.on("connection", (socket) => {
                 p2Score++;
             }
             // score
-            if (result === 0) io.to(room.roomCode).emit("message-receive", `EVEN!`);
-            else io.to(room.roomCode).emit("message-receive", `Player${result} Score!`);
+            if (result === 0) {
+                io.to(room.roomCode).emit("message-receive", `EVEN!`);
+                evenCnt++;
+                if (evenCnt == maxEvenCnt) {
+                    io.to(room.roomCode).emit("message-receive", `REACH MAX 'EVEN' COUNT`);
+                    terminateRoom()
+                    return;
+                }
+            } else io.to(room.roomCode).emit("message-receive", `Player${result} Score!`);
             io.to(room.roomCode).emit("message-receive", `Player1 - ${p1Score} VS ${p2Score} - Player2`);
             p1Choice = null;
             p2Choice = null;

@@ -6,12 +6,31 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
+        <style>
+            #message-container {
+                margin-top: 20px;
+                border: 1px solid black;
+                overflow-y: auto;
+                width: 400px;
+                height: 400px;
+            }
+
+            #message-container div {
+                background-color: #ccc;
+                padding: 5px;
+            }
+
+            #message-container div:nth-child(2n) {
+                background-color: #f0f0f0;
+            }
+        </style>
     </head>
     <body>
         <input placeholder="message" />
         <button id="message">Send Message</button><br />
         <p><button id="create">Create Room</button> <button id="join">Join Room</button></p><br>
         <button id="choose">Choose</button>
+        <div id="message-container"></div>
         <ul style="list-style-type: none;"></ul>
     </body>
 </html>
