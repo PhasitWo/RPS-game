@@ -67,3 +67,8 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+#error-modal::backdrop {
+    backdrop-filter: blur(10px);
+    background: linear-gradient(45deg, rgba(255, 0, 0, 0.371), rgba(0, 0, 255, 0.334));
+}
