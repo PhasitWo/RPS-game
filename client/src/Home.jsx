@@ -1,40 +1,65 @@
 import { useState } from "react";
 
-function Home({ setPage }) {
-    function joinRoom(e) {
-        e.preventDefault()
-        const loadModal = document.getElementById("load-modal");
-        loadModal.showModal();
-        setTimeout(() => {
-            loadModal.close();
-            popError("something went wrong");
-        }, 2000);
+function Home({ setPage, socket }) {
+    const [roomCode, setRoomCode] = useState(null);
+
+    function createRoom() {
+        socket.emit("create-room", (roomCode) => {
+            setRoomCode(roomCode)
+            const waitModal = document.getElementById("wait-modal");
+            waitModal.showModal();
+        });
     }
 
-    function closeJoinModal() {
-        document.getElementById("join-modal").close();
+    function copyToClipboard() {
+        navigator.clipboard.writeText(roomCode)
+    }
+
+    async function pasteFromClipboard() {
+        const codeField = document.getElementById("code");
+        let clipboardText = await navigator.clipboard.readText();
+        if (codeField.value != "" || clipboardText.length !== 4) return;
+        codeField.value = clipboardText
+    }
+
+    function quitWaiting() {
+        socket.emit("terminate-room")
+        setRoomCode(null)
+    }
+
+    function joinRoom(e) {
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
+        socket.emit("join-room", data.get("code").trim(), (err_res) => {
+            popError(err_res);
+        });
     }
 
     return (
         <>
             <div className="home-container">
                 <h2>Rock Paper Scissors</h2>
-                <button onClick={() => document.getElementById("wait-modal").showModal()}>Create Room</button>
+                <button onClick={createRoom}>Create Room</button>
                 <br />
                 <button onClick={() => document.getElementById("join-modal").showModal()}>Join Room</button>
-                <dialog className="join-modal" id="join-modal">
+                <dialog className="join-modal" id="join-modal" onClose={(e) => document.querySelector("#code").value = ""}>
                     <p>This is Join Dialog!</p>
                     <form onSubmit={joinRoom} method="dialog">
                         <label htmlFor="code">Code </label>
-                        <input id="code"></input>
-                        <button type="submit">Join</button>
-                        <button type="button" onClick={closeJoinModal}>Close</button>
+                        <input id="code" name="code" placeholder="code" onFocus={pasteFromClipboard} required></input>
+                        <button type="submit" autoFocus>Join</button>
+                        <button type="button" onClick={() => document.getElementById("join-modal").close()}>
+                            Close
+                        </button>
                     </form>
                 </dialog>
                 <dialog className="wait-modal" id="wait-modal">
                     Waiting for other player!
-                    <form method="dialog">
-                        <button>Quit</button>
+                    <br />
+                    Send this <i>{roomCode}</i> to your friend
+                    <form onSubmit={quitWaiting} method="dialog">
+                        <button id="copy-button" type="button" onClick={copyToClipboard}>Copy</button>
+                        <button autoFocus>Quit</button>
                     </form>
                 </dialog>
                 <dialog className="load-modal" id="load-modal">

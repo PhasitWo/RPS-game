@@ -55,6 +55,16 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+#copy-button:focus {
+  background-color: #646cff;
+}
+
+i {
+  background-color: #747bff;
+  border-radius: 5px;
+  padding: 2px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
