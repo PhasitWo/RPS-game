@@ -1,0 +1,34 @@
+#counter {
+    text-align: center;
+}
+
+#score {
+    text-align: center;
+}
+
+#animation-space {
+    background-color: red;
+    width: 100%;
+    height: 50%;
+}
+
+#button-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    height: 20%;
+    background-color: green;
+}
+
+#quit-wrapper {
+    display: flex;
+    align-items: flex-end;
+    height: 15%;
+}
+
+#quit {
+   display: block;
+   margin: 0 auto;
+}
+

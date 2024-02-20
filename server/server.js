@@ -5,9 +5,6 @@ let rooms = [];
 
 io.on("connection", (socket) => {
     console.log(`${socket.id} connected to server`);
-    // TODO: battle-start event
-    // TODO: battle-choose (Rename) event
-    // TODO: battle-score event
     // TODO: battle-rematch event
     socket.on("create-room", (callback) => {
         // create code
@@ -15,13 +12,13 @@ io.on("connection", (socket) => {
         rooms.push({ roomCode: roomCode, status: "running", player1: socket.id, player2: null });
         socket.join(roomCode);
         callback(roomCode);
-        console.log(`room ${roomCode} created`)
+        console.log(`room ${roomCode} created`);
         // TODO: waiting-for-player timeout
     });
 
-    socket.on("terminate-room", ()=> {
-        terminateRoom()
-    })
+    socket.on("terminate-room", () => {
+        terminateRoom();
+    });
 
     socket.on("join-room", (roomCode, callback) => {
         let room = rooms.find((obj) => {
@@ -56,7 +53,7 @@ io.on("connection", (socket) => {
             .forEach((roomCode) => {
                 io.to(roomCode).emit("room-terminated");
                 io.socketsLeave(roomCode);
-                console.log(`room ${roomCode} terminated`)
+                console.log(`room ${roomCode} terminated`);
                 // remove room from memory
                 let roomIndex = rooms.findIndex((obj) => {
                     return obj.roomCode === roomCode;
@@ -76,7 +73,7 @@ io.on("connection", (socket) => {
         let p1Choice = null;
         let p2Choice = null;
         let evenCnt = 0;
-        const maxChooseTime = 5
+        const maxChooseTime = 5;
         const maxEvenCnt = 3;
         while (p1Score < 3 && p2Score < 3) {
             if (room.status === "terminated") return;
@@ -90,7 +87,7 @@ io.on("connection", (socket) => {
             io.to(room.roomCode).emit("server-message", `wait for player choices`);
             let p1Promise = new Promise((resolve, reject) => {
                 io.to(room.player1)
-                    .timeout(maxChooseTime*1000)
+                    .timeout(maxChooseTime * 1000)
                     .emit("battle-choose", (err, response) => {
                         if (err) resolve("X");
                         else resolve(response);
@@ -128,7 +125,7 @@ io.on("connection", (socket) => {
                 evenCnt++;
                 if (evenCnt == maxEvenCnt) {
                     io.to(room.roomCode).emit("server-message", `REACH MAX 'EVEN' COUNT`);
-                    terminateRoom()
+                    terminateRoom();
                     return;
                 }
             } else io.to(room.roomCode).emit("server-message", `Player${result} Score!`);
@@ -136,9 +133,12 @@ io.on("connection", (socket) => {
             p1Choice = null;
             p2Choice = null;
             // play animation
-            io.to(room.roomCode).emit("battle-score", {player1: p1Score, player2:p2Score});
+            io.to(room.roomCode).emit("battle-score", {
+                player1: { id: room.player1, score: p1Score },
+                player2: { id: room.player2, score: p2Score },
+            });
             io.to(room.roomCode).emit("server-message", `start animation`);
-            await new Promise(resolve => setTimeout(resolve, 3000))
+            await new Promise((resolve) => setTimeout(resolve, 3000));
             io.to(room.roomCode).emit("server-message", `animation ended`);
         }
         // anouce winner
