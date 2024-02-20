@@ -22,11 +22,6 @@ function Home({ setPage, socket }) {
         codeField.value = clipboardText
     }
 
-    function quitWaiting() {
-        socket.emit("terminate-room")
-        setRoomCode(null)
-    }
-
     function joinRoom(e) {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
@@ -42,12 +37,18 @@ function Home({ setPage, socket }) {
                 <button onClick={createRoom}>Create Room</button>
                 <br />
                 <button onClick={() => document.getElementById("join-modal").showModal()}>Join Room</button>
-                <dialog className="join-modal" id="join-modal" onClose={(e) => document.querySelector("#code").value = ""}>
+                <dialog
+                    className="join-modal"
+                    id="join-modal"
+                    onClose={(e) => (document.querySelector("#code").value = "")}
+                >
                     <p>This is Join Dialog!</p>
                     <form onSubmit={joinRoom} method="dialog">
                         <label htmlFor="code">Code </label>
                         <input id="code" name="code" placeholder="code" onFocus={pasteFromClipboard} required></input>
-                        <button type="submit" autoFocus>Join</button>
+                        <button type="submit" autoFocus>
+                            Join
+                        </button>
                         <button type="button" onClick={() => document.getElementById("join-modal").close()}>
                             Close
                         </button>
@@ -57,8 +58,10 @@ function Home({ setPage, socket }) {
                     Waiting for other player!
                     <br />
                     Send this <i>{roomCode}</i> to your friend
-                    <form onSubmit={quitWaiting} method="dialog">
-                        <button id="copy-button" type="button" onClick={copyToClipboard}>Copy</button>
+                    <form onSubmit={() => socket.emit("terminate-room")} method="dialog">
+                        <button id="copy-button" type="button" onClick={copyToClipboard}>
+                            Copy
+                        </button>
                         <button autoFocus>Quit</button>
                     </form>
                 </dialog>

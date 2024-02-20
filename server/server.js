@@ -144,34 +144,37 @@ io.on("connection", (socket) => {
         // anouce winner
         let winner = (p1Score === 3 && "player1") || (p2Score === 3 && "player2");
         io.to(room.roomCode).emit("server-message", `${winner} win!!!`);
-        // ask replay
-        io.to(room.roomCode).emit("server-message", `Replay: y/n`);
+        // ask rematch
         // counter
-        let cnt = 9;
+        const maxAskRematchTime = 10;
+        let cnt = maxAskRematchTime;
+        io.to(room.roomCode).emit("battle-rematch-counter", cnt--);
         let counter = setInterval(() => {
-            io.to(room.roomCode).emit("battle-counter", cnt--);
+            io.to(room.roomCode).emit("battle-rematch-counter", cnt--);
         }, 1000);
         // ask players
         let p1Promise = new Promise((resolve, reject) => {
             io.to(room.player1)
-                .timeout(10000)
-                .emit("choose", (err, response) => {
-                    if (err) resolve("X");
+                .timeout(maxAskRematchTime * 1000)
+                .emit("battle-rematch", room[winner], (err, response) => {
+                    if (err) resolve(false);
                     else resolve(response);
                 });
         });
         let p2Promise = new Promise((resolve, reject) => {
             io.to(room.player2)
-                .timeout(10000)
-                .emit("choose", (err, response) => {
-                    if (err) resolve("X");
+                .timeout(maxAskRematchTime * 1000)
+                .emit("battle-rematch", room[winner], (err, response) => {
+                    if (err) resolve(false);
                     else resolve(response);
                 });
         });
-        [[p1Choice], [p2Choice]] = await Promise.all([p1Promise, p2Promise]); // parallel ongoing promises
+        [p1Choice, p2Choice] = await Promise.all([p1Promise, p2Promise]); // parallel ongoing promises
         clearInterval(counter);
         // evaluate
-        if (p1Choice === "y" && p2Choice === "y") battle(room);
-        else terminateRoom();
+        if (p1Choice && p2Choice) {
+            io.to(room.roomCode).emit("battle-rematch-confirm");
+            battle(room);
+        } else terminateRoom();
     }
 });
