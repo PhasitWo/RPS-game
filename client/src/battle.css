@@ -6,11 +6,6 @@
     text-align: center;
 }
 
-#animation-space {
-    background-color: red;
-    width: 100%;
-    height: 50%;
-}
 
 #button-panel {
     display: flex;
@@ -28,7 +23,59 @@
 }
 
 #quit {
-   display: block;
-   margin: 0 auto;
+    display: block;
+    margin: 0 auto;
 }
 
+#animation-space {
+    background-color: rgb(255, 158, 158);
+    width: 100%;
+    height: 50%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#you-img {
+    width: 150px;
+    rotate: 45deg;
+    transform: scaleX(-1);
+}
+
+#foe-img {
+    width: 150px;
+    rotate: -45deg;
+}
+
+@keyframes you-animation {
+    0% {rotate: 45deg;}    
+    20% {rotate: 90deg;}    
+    40% {rotate: 45deg;}    
+    60% {rotate: 90deg;}    
+    80% {rotate: 45deg;}    
+    100% {rotate: 90deg;}    
+}
+
+@keyframes foe-animation {
+    0% {rotate: -45deg;}    
+    20% {rotate: -90deg;}    
+    40% {rotate: -45deg;}    
+    60% {rotate: -90deg;}    
+    80% {rotate: -45deg;}    
+    100% {rotate: -90deg;}    
+}
+
+.you-animate {
+    animation-name: you-animation;
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+    animation-timing-function: linear;
+}
+
+.foe-animate {
+    animation-name: foe-animation;
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+    animation-timing-function: linear;
+}

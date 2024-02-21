@@ -125,21 +125,23 @@ io.on("connection", (socket) => {
                 evenCnt++;
                 if (evenCnt == maxEvenCnt) {
                     io.to(room.roomCode).emit("server-message", `REACH MAX 'EVEN' COUNT`);
+                    io.to(room.roomCode).emit("battle-reach-max-even");
                     terminateRoom();
                     return;
                 }
             } else io.to(room.roomCode).emit("server-message", `Player${result} Score!`);
             io.to(room.roomCode).emit("server-message", `Player1 - ${p1Score} VS ${p2Score} - Player2`);
-            p1Choice = null;
-            p2Choice = null;
             // play animation
             io.to(room.roomCode).emit("battle-score", {
-                player1: { id: room.player1, score: p1Score },
-                player2: { id: room.player2, score: p2Score },
+                player1: { id: room.player1, choice: p1Choice, score: p1Score },
+                player2: { id: room.player2, choice: p2Choice, score: p2Score },
             });
             io.to(room.roomCode).emit("server-message", `start animation`);
-            await new Promise((resolve) => setTimeout(resolve, 3000));
+            await new Promise((resolve) => setTimeout(resolve, 4000));
             io.to(room.roomCode).emit("server-message", `animation ended`);
+            // reset choice
+            p1Choice = null;
+            p2Choice = null;
         }
         // anouce winner
         let winner = (p1Score === 3 && "player1") || (p2Score === 3 && "player2");

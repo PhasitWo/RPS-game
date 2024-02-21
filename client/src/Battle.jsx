@@ -1,5 +1,15 @@
 import { useState, useEffect } from "react";
 import "./battle.css";
+import rockImg from "./assets/rock.png";
+import paperImg from "./assets/paper.png";
+import scissorsImg from "./assets/scissors.png";
+
+const mapping = {
+    R: rockImg,
+    P: paperImg,
+    S: scissorsImg,
+    X: null,
+};
 
 function Battle({ setPage, socket, roomDetail, setRoomDetail }) {
     // battle
@@ -7,6 +17,9 @@ function Battle({ setPage, socket, roomDetail, setRoomDetail }) {
     const [buttonVisible, setButtonVisible] = useState(true);
     const [youScore, setYouScore] = useState(0);
     const [foeScore, setFoeScore] = useState(0);
+    const [youImg, setYouImg] = useState(rockImg);
+    const [foeImg, setFoeImg] = useState(rockImg);
+    const [animate, setAnimate] = useState(false);
     const [youWin, setYouWin] = useState(true);
     // rematch modal
     const [rematch, setRematch] = useState(false);
@@ -15,6 +28,9 @@ function Battle({ setPage, socket, roomDetail, setRoomDetail }) {
     useEffect(() => {
         socket.on("battle-counter", (number) => setCounter(number));
         socket.on("battle-choose", (callback) => {
+            setYouImg(rockImg);
+            setFoeImg(rockImg);
+            setAnimate(false);
             setButtonVisible(true);
             ["R", "P", "S"].forEach((id) => {
                 document.getElementById(id).onclick = () => {
@@ -23,37 +39,56 @@ function Battle({ setPage, socket, roomDetail, setRoomDetail }) {
                 };
             });
         });
-        socket.on("battle-score", (score_obj) => {
-            // TODO animation
-            // setTimeout for animation before set scores
-            if (socket.id === score_obj.player1.id) {
-                setYouScore(score_obj.player1.score);
-                setFoeScore(score_obj.player2.score);
-            } else {
-                setYouScore(score_obj.player2.score);
-                setFoeScore(score_obj.player1.score);
-            }
-            setButtonVisible(false);
-        });
+        socket.on(
+            "battle-score",
+            (result) => {
+                // animation
+                setAnimate(true);
+                setTimeout(() => {
+                    if (socket.id === result.player1.id) {
+                        setYouImg(mapping[result.player1.choice]);
+                        setFoeImg(mapping[result.player2.choice]);
+                    } else {
+                        setYouImg(mapping[result.player2.choice]);
+                        setFoeImg(mapping[result.player1.choice]);
+                    }
+                }, 2000);
+                // show score after animation
+                setTimeout(() => {
+                    if (socket.id === result.player1.id) {
+                        setYouScore(result.player1.score);
+                        setFoeScore(result.player2.score);
+                    } else {
+                        setYouScore(result.player2.score);
+                        setFoeScore(result.player1.score);
+                    }
+                    setButtonVisible(false);
+                }, 2000);
+            },
+            
+        );
         socket.on("battle-rematch", (winnerId, callback) => {
             if (socket.id === winnerId) setYouWin(true);
             else setYouWin(false);
             document.getElementById("rematch-modal").showModal();
             document.getElementById("rematch-button").onclick = () => {
-                callback(true)
+                callback(true);
                 setRematch(true);
             };
         });
         socket.on("battle-rematch-counter", (number) => {
-            setReCounter(number)
-        })
+            setReCounter(number);
+        });
         socket.on("battle-rematch-confirm", () => {
             // reset state variable
             setYouScore(0);
             setFoeScore(0);
-            setRematch(false)
+            setRematch(false);
             document.getElementById("rematch-modal").close();
-        })
+        });
+        socket.on("battle-reach-max-even", () => {
+            setTimeout(() => popError("Reach max even-result times (prevent endless loop)"), 1000);
+        });
         return () => {
             socket.removeAllListeners("battle-counter");
             socket.removeAllListeners("battle-choose");
@@ -61,6 +96,7 @@ function Battle({ setPage, socket, roomDetail, setRoomDetail }) {
             socket.removeAllListeners("battle-rematch");
             socket.removeAllListeners("battle-rematch-counter");
             socket.removeAllListeners("battle-rematch-confirm");
+            socket.removeAllListeners("battle-reach-max-even");
             setRoomDetail(null);
         };
     }, []);
@@ -71,7 +107,10 @@ function Battle({ setPage, socket, roomDetail, setRoomDetail }) {
             <div id="score">
                 YOU {youScore} vs {foeScore} FOE
             </div>
-            <div id="animation-space"></div>
+            <div id="animation-space">
+                <img id="you-img" className={animate && "you-animate"} src={youImg} />
+                <img id="foe-img" className={animate && "foe-animate"} src={foeImg} />
+            </div>
             <div id="button-panel">
                 <button style={{ display: !buttonVisible && "none" }} id="R">
                     Rock
@@ -101,11 +140,7 @@ function Battle({ setPage, socket, roomDetail, setRoomDetail }) {
                 <br />
                 {reCounter}
                 <form onSubmit={() => socket.emit("terminate-room")} method="dialog">
-                    <button
-                        id="rematch-button"
-                        type="button"
-                        style={{ display: rematch && "none" }}
-                    >
+                    <button id="rematch-button" type="button" style={{ display: rematch && "none" }}>
                         Rematch
                     </button>
                     <button>Quit</button>
