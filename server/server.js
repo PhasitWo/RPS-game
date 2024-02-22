@@ -133,8 +133,8 @@ io.on("connection", (socket) => {
             io.to(room.roomCode).emit("server-message", `Player1 - ${p1Score} VS ${p2Score} - Player2`);
             // play animation
             io.to(room.roomCode).emit("battle-score", {
-                player1: { id: room.player1, choice: p1Choice, score: p1Score },
-                player2: { id: room.player2, choice: p2Choice, score: p2Score },
+                [room.player1]: { choice: p1Choice, score: p1Score },
+                [room.player2]: { choice: p2Choice, score: p2Score },
             });
             io.to(room.roomCode).emit("server-message", `start animation`);
             await new Promise((resolve) => setTimeout(resolve, 4000));

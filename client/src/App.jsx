@@ -9,7 +9,7 @@ function App() {
     const [roomDetail, setRoomDetail] = useState(null);
 
     useEffect(() => {
-        let socket = io("http://localhost:3000");
+        let socket = io("https://rps-game-sgv6.onrender.com");
         socket.on("connect", () => setSocket(socket));
         socket.on("room-terminated", () => {
             popError("The room is terminated");
@@ -27,10 +27,10 @@ function App() {
 
     return (
         <>
-            <div className="navbar">
+            {/* <div className="navbar">
                 <button onClick={() => setPage("Home")}>Home</button>
                 <button onClick={() => setPage("Battle")}>Battle</button>
-            </div>
+            </div> */}
             <div className="content">
                 {page === "Home" && <Home setPage={setPage} socket={socket} />}
                 {page === "Battle" && (

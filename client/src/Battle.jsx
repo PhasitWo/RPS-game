@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./battle.css";
 import rockImg from "./assets/rock.png";
 import paperImg from "./assets/paper.png";
@@ -11,10 +11,11 @@ const mapping = {
     X: null,
 };
 
-function Battle({ setPage, socket, roomDetail, setRoomDetail }) {
+function Battle({ setPage, socket, roomDetail }) {
     // battle
     const [counter, setCounter] = useState(0);
     const [buttonVisible, setButtonVisible] = useState(true);
+    const foeID = useRef();
     const [youScore, setYouScore] = useState(0);
     const [foeScore, setFoeScore] = useState(0);
     const [youImg, setYouImg] = useState(rockImg);
@@ -26,6 +27,7 @@ function Battle({ setPage, socket, roomDetail, setRoomDetail }) {
     const [reCounter, setReCounter] = useState(0);
 
     useEffect(() => {
+        foeID.current = socket.id === roomDetail.player1 ? roomDetail.player2 : roomDetail.player1;
         socket.on("battle-counter", (number) => setCounter(number));
         socket.on("battle-choose", (callback) => {
             setYouImg(rockImg);
@@ -39,34 +41,20 @@ function Battle({ setPage, socket, roomDetail, setRoomDetail }) {
                 };
             });
         });
-        socket.on(
-            "battle-score",
-            (result) => {
-                // animation
-                setAnimate(true);
-                setTimeout(() => {
-                    if (socket.id === result.player1.id) {
-                        setYouImg(mapping[result.player1.choice]);
-                        setFoeImg(mapping[result.player2.choice]);
-                    } else {
-                        setYouImg(mapping[result.player2.choice]);
-                        setFoeImg(mapping[result.player1.choice]);
-                    }
-                }, 2000);
-                // show score after animation
-                setTimeout(() => {
-                    if (socket.id === result.player1.id) {
-                        setYouScore(result.player1.score);
-                        setFoeScore(result.player2.score);
-                    } else {
-                        setYouScore(result.player2.score);
-                        setFoeScore(result.player1.score);
-                    }
-                    setButtonVisible(false);
-                }, 2000);
-            },
-            
-        );
+        socket.on("battle-score", (result) => {
+            // animation
+            setAnimate(true);
+            setTimeout(() => {
+                setYouImg(mapping[result[socket.id].choice]);
+                setFoeImg(mapping[result[foeID.current].choice]);
+            }, 2000);
+            // show score after animation
+            setTimeout(() => {
+                setYouScore(result[socket.id].score);
+                setFoeScore(result[foeID.current].score);
+                setButtonVisible(false);
+            }, 2000);
+        });
         socket.on("battle-rematch", (winnerId, callback) => {
             if (socket.id === winnerId) setYouWin(true);
             else setYouWin(false);
@@ -97,19 +85,22 @@ function Battle({ setPage, socket, roomDetail, setRoomDetail }) {
             socket.removeAllListeners("battle-rematch-counter");
             socket.removeAllListeners("battle-rematch-confirm");
             socket.removeAllListeners("battle-reach-max-even");
-            setRoomDetail(null);
         };
     }, []);
 
     return (
         <>
-            <h3 id="counter">{counter}</h3>
+            <h3 id="counter">
+                <span>BO5</span>
+                <br />
+                {counter}
+            </h3>
             <div id="score">
                 YOU {youScore} vs {foeScore} FOE
             </div>
             <div id="animation-space">
-                <img id="you-img" className={animate && "you-animate"} src={youImg} />
-                <img id="foe-img" className={animate && "foe-animate"} src={foeImg} />
+                <img id="you-img" className={animate ? "you-animate" : undefined} src={youImg} />
+                <img id="foe-img" className={animate ? "foe-animate" : undefined} src={foeImg} />
             </div>
             <div id="button-panel">
                 <button style={{ display: !buttonVisible && "none" }} id="R">

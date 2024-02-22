@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>RPS</title>
+      <script type="module" crossorigin src="/assets/index-ShGfavYH.js"></script>
+      <link rel="stylesheet" crossorigin href="/assets/index-zIYsh1NL.css">
+    </head>
+    <body>
+        <div id="root"></div>
+        <dialog className="error-modal" id="error-modal">
+                <p id="error-message"> Error </p>
+                <form method="dialog">
+                    <button>Close</button>
+                </form>
+            </dialog>
+        <script src="https://cdn.socket.io/socket.io-3.0.0.js"></script>
+        <script>
+            const popError = (message) => {
+                const errorModal = document.getElementById("error-modal");
+                const errorMessage = document.getElementById("error-message");
+                errorMessage.innerHTML = message;
+                errorModal.showModal();
+            };
+        </script>
+    </body>
+</html>
