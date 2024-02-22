@@ -14,7 +14,7 @@ const mapping = {
 function Battle({ setPage, socket, roomDetail }) {
     // battle
     const [counter, setCounter] = useState(0);
-    const [buttonVisible, setButtonVisible] = useState(true);
+    const [buttonVisible, setButtonVisible] = useState(false);
     const foeID = useRef();
     const [youScore, setYouScore] = useState(0);
     const [foeScore, setFoeScore] = useState(0);
