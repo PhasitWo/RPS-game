@@ -73,7 +73,7 @@ io.on("connection", (socket) => {
         let p1Choice = null;
         let p2Choice = null;
         let evenCnt = 0;
-        const maxChooseTime = 5;
+        const maxChooseTime = 10;
         const maxEvenCnt = 3;
         while (p1Score < 3 && p2Score < 3) {
             if (room.status === "terminated") return;
@@ -106,7 +106,7 @@ io.on("connection", (socket) => {
             io.to(room.roomCode).emit("server-message", `p1Choice:${p1Choice}  p2Choice:${p2Choice}`);
             // evaluate
             let result;
-            if (p1Choice === "X" && p2Choice === "X") result = 0;
+            if (p1Choice === "X" && p2Choice === "X" || p1Choice === p2Choice) result = 0;
             else if (
                 (p1Choice === "R" && p2Choice === "S") ||
                 (p1Choice === "S" && p2Choice === "P") ||
