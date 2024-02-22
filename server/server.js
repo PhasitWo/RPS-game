@@ -67,6 +67,8 @@ io.on("connection", (socket) => {
 
     async function battle(room) {
         io.to(room.roomCode).emit("battle-start", room);
+        // fixed bug where onmount-script is not finished before battle-choose event
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         console.log(`${room.roomCode} START!`);
         let p1Score = 0;
         let p2Score = 0;
@@ -106,7 +108,7 @@ io.on("connection", (socket) => {
             io.to(room.roomCode).emit("server-message", `p1Choice:${p1Choice}  p2Choice:${p2Choice}`);
             // evaluate
             let result;
-            if (p1Choice === "X" && p2Choice === "X" || p1Choice === p2Choice) result = 0;
+            if ((p1Choice === "X" && p2Choice === "X") || p1Choice === p2Choice) result = 0;
             else if (
                 (p1Choice === "R" && p2Choice === "S") ||
                 (p1Choice === "S" && p2Choice === "P") ||
