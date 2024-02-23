@@ -99,6 +99,7 @@ button {
     cursor: pointer;
     transition: border-color 0.25s;
     margin: 5px;
+    color: white !important;
 }
 button:hover {
     border-color: var(--color-accent2);
