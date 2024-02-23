@@ -4,10 +4,13 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="https://fonts.googleapis.com/css?family=Chewy" rel="stylesheet" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        />
         <title>RPS</title>
-      <script type="module" crossorigin src="/assets/index-HPewBIW9.js"></script>
-      <link rel="stylesheet" crossorigin href="/assets/index-lut4gSWb.css">
+      <script type="module" crossorigin src="/assets/index-_SXc8ETw.js"></script>
+      <link rel="stylesheet" crossorigin href="/assets/index-yc9o4V59.css">
     </head>
     <body>
         <div id="root"></div>
@@ -18,6 +21,13 @@
                 const errorMessage = document.getElementById("error-message");
                 errorMessage.innerHTML = message;
                 errorModal.showModal();
+            };
+            const playSound = (soundName) => {
+                return () => {
+                    const sound = document.getElementById(soundName);
+                    sound.play();
+                    console.log(soundName +" played")
+                }
             };
         </script>
     </body>
