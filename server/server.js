@@ -136,9 +136,10 @@ io.on("connection", (socket) => {
             io.to(room.roomCode).emit("battle-score", {
                 [room.player1]: { choice: p1Choice, score: p1Score },
                 [room.player2]: { choice: p2Choice, score: p2Score },
+                scorerId: room[`player${result}`]
             });
             io.to(room.roomCode).emit("server-message", `start animation`);
-            await new Promise((resolve) => setTimeout(resolve, 3000));
+            await new Promise((resolve) => setTimeout(resolve, 3300));
             io.to(room.roomCode).emit("server-message", `animation ended`);
             // reset choice
             p1Choice = null;
@@ -149,7 +150,7 @@ io.on("connection", (socket) => {
         io.to(room.roomCode).emit("server-message", `${winner} win!!!`);
         // ask rematch
         // counter
-        const maxAskRematchTime = 10;
+        const maxAskRematchTime = 20;
         let cnt = maxAskRematchTime;
         io.to(room.roomCode).emit("battle-rematch-counter", cnt--);
         let counter = setInterval(() => {

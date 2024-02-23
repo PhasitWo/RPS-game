@@ -11,6 +11,8 @@ const mapping = {
     X: null,
 };
 
+const youScoreSound = playSound("you-score-sound");
+
 function Battle({ setPage, socket, roomDetail }) {
     // battle
     const [counter, setCounter] = useState(0);
@@ -51,11 +53,18 @@ function Battle({ setPage, socket, roomDetail }) {
                 setFoeImg(mapping[result[foeID.current].choice]);
                 setYouScore(result[socket.id].score);
                 setFoeScore(result[foeID.current].score);
+                if (result.scorerId === socket.id) playSound("you-score-sound")();
+                else if (result.scorerId === foeID.current) playSound("foe-score-sound")();
             }, 1500);
         });
         socket.on("battle-rematch", (winnerId, callback) => {
-            if (socket.id === winnerId) setYouWin(true);
-            else setYouWin(false);
+            if (winnerId === socket.id) {
+                setYouWin(true);
+                playSound("you-win-sound")();
+            } else {
+                setYouWin(false);
+                playSound("you-lose-sound")();
+            }
             document.getElementById("rematch-modal").showModal();
             document.getElementById("rematch-button").onclick = () => {
                 callback(true);
@@ -94,20 +103,35 @@ function Battle({ setPage, socket, roomDetail }) {
                 {counter}
             </h3>
             <div id="score">
-                YOU {youScore} vs {foeScore} FOE
+                <div>YOU {youScore}</div> <div>vs</div> <div>{foeScore} FOE </div>
             </div>
             <div id="animation-space">
                 <img id="you-img" className={animate ? "you-animate" : undefined} src={youImg} />
                 <img id="foe-img" className={animate ? "foe-animate" : undefined} src={foeImg} />
             </div>
             <div id="button-panel">
-                <button style={{ display: !buttonVisible && "none" }} id="R">
+                <button
+                    className={!buttonVisible ? "gray-out-button" : undefined}
+                    disabled={!buttonVisible}
+                    id="R"
+                    onMouseDown={playSound("click-sound")}
+                >
                     Rock
                 </button>
-                <button style={{ display: !buttonVisible && "none" }} id="P">
+                <button
+                    className={!buttonVisible ? "gray-out-button" : undefined}
+                    disabled={!buttonVisible}
+                    id="P"
+                    onMouseDown={playSound("click-sound")}
+                >
                     Paper
                 </button>
-                <button style={{ display: !buttonVisible && "none" }} id="S">
+                <button
+                    className={!buttonVisible ? "gray-out-button" : undefined}
+                    disabled={!buttonVisible}
+                    id="S"
+                    onMouseDown={playSound("click-sound")}
+                >
                     Scissors
                 </button>
             </div>
@@ -129,10 +153,15 @@ function Battle({ setPage, socket, roomDetail }) {
                 <br />
                 {reCounter}
                 <form onSubmit={() => socket.emit("terminate-room")} method="dialog">
-                    <button id="rematch-button" type="button" style={{ display: rematch && "none" }}>
+                    <button
+                        id="rematch-button"
+                        type="button"
+                        style={{ display: rematch && "none" }}
+                        onMouseDown={playSound("click-sound")}
+                    >
                         Rematch
                     </button>
-                    <button>Quit</button>
+                    <button onMouseDown={playSound("click-sound")}>Quit</button>
                 </form>
             </dialog>
         </>

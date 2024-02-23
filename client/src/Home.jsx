@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function Home({ setPage, socket , connected}) {
+function Home({ setPage, socket, connected }) {
     const [roomCode, setRoomCode] = useState(null);
 
     function createRoom() {
@@ -13,11 +13,11 @@ function Home({ setPage, socket , connected}) {
 
     function copyCodeToClipboard() {
         navigator.clipboard.writeText(roomCode);
-        alert(`"${roomCode}" is copied to your clipboard`)
+        alert(`"${roomCode}" is copied to your clipboard`);
     }
 
     function copyLinkToClipboard() {
-        const url = window.location.origin + "/?code=" + roomCode
+        const url = window.location.origin + "/?code=" + roomCode;
         navigator.clipboard.writeText(url);
         alert(`"${url}" is copied to your clipboard`);
     }
@@ -41,9 +41,16 @@ function Home({ setPage, socket , connected}) {
         <>
             <div className="home-container">
                 <h2>Rock Paper Scissors</h2>
-                <button onClick={createRoom}>Create Room</button>
+                <button onClick={createRoom} onMouseDown={playSound("click-sound")}>
+                    Create Room
+                </button>
                 <br />
-                <button onClick={() => document.getElementById("join-modal").showModal()}>Join Room</button>
+                <button
+                    onClick={() => document.getElementById("join-modal").showModal()}
+                    onMouseDown={playSound("click-sound")}
+                >
+                    Join Room
+                </button>
                 <dialog
                     className="join-modal"
                     id="join-modal"
@@ -59,10 +66,14 @@ function Home({ setPage, socket , connected}) {
                             autoComplete="off"
                             required
                         ></input>
-                        <button type="submit" autoFocus>
+                        <button type="submit" autoFocus onMouseDown={playSound("click-sound")}>
                             Join
                         </button>
-                        <button type="button" onClick={() => document.getElementById("join-modal").close()}>
+                        <button
+                            type="button"
+                            onClick={() => document.getElementById("join-modal").close()}
+                            onMouseDown={playSound("click-sound")}
+                        >
                             Close
                         </button>
                     </form>
@@ -72,13 +83,23 @@ function Home({ setPage, socket , connected}) {
                     <br />
                     Send this <i>{roomCode}</i> to your friend
                     <form onSubmit={() => socket.emit("terminate-room")} method="dialog">
-                        <button id="copy-code-button" type="button" onClick={copyCodeToClipboard}>
+                        <button
+                            id="copy-code-button"
+                            type="button"
+                            onClick={copyCodeToClipboard}
+                            onMouseDown={playSound("click-sound")}
+                        >
                             Copy Code
                         </button>
-                        <button id="copy-link-button" type="button" onClick={copyLinkToClipboard}>
+                        <button
+                            id="copy-link-button"
+                            type="button"
+                            onClick={copyLinkToClipboard}
+                            onMouseDown={playSound("click-sound")}
+                        >
                             Copy Link
                         </button>
-                        <button >Quit</button>
+                        <button onMouseDown={playSound("click-sound")}>Quit</button>
                     </form>
                 </dialog>
             </div>

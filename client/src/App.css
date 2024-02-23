@@ -81,10 +81,6 @@ dialog i {
     font-family: monospace;
 }
 
-dialog button:focus-within {
-    box-shadow: 0 0 1rem rgb(0, 0, 0);
-}
-
 body {
     margin: 0;
     /* display: flex;
@@ -92,7 +88,7 @@ body {
   min-height: 100vh; */
 }
 
-button {
+button , customButton{
     border-radius: 8px;
     border: 2px solid transparent;
     padding: 0.6em 1.2em;
@@ -105,7 +101,7 @@ button {
     margin: 5px;
     color: white !important;
 }
-button:hover {
+button:hover, customButton:hover {
     border-color: var(--color-accent2);
 }
 button:focus {
