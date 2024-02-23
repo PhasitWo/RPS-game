@@ -5,21 +5,21 @@ function Home({ setPage, socket }) {
 
     function createRoom() {
         socket.emit("create-room", (roomCode) => {
-            setRoomCode(roomCode)
+            setRoomCode(roomCode);
             const waitModal = document.getElementById("wait-modal");
             waitModal.showModal();
         });
     }
 
     function copyToClipboard() {
-        navigator.clipboard.writeText(roomCode)
+        navigator.clipboard.writeText(roomCode);
     }
 
     async function pasteFromClipboard() {
         const codeField = document.getElementById("code");
         let clipboardText = await navigator.clipboard.readText();
         if (codeField.value != "" || clipboardText.length !== 4) return;
-        codeField.value = clipboardText
+        codeField.value = clipboardText;
     }
 
     function joinRoom(e) {
@@ -42,10 +42,17 @@ function Home({ setPage, socket }) {
                     id="join-modal"
                     onClose={(e) => (document.querySelector("#code").value = "")}
                 >
-                    <p>This is Join Dialog!</p>
+                    Join Your Friend!
                     <form onSubmit={joinRoom} method="dialog">
-                        <label htmlFor="code">Code </label>
-                        <input id="code" name="code" placeholder="code" onFocus={pasteFromClipboard} required></input>
+                        
+                        <input
+                            id="code"
+                            name="code"
+                            placeholder="code"
+                            onFocus={pasteFromClipboard}
+                            autoComplete="off"
+                            required
+                        ></input>
                         <button type="submit" autoFocus>
                             Join
                         </button>
@@ -57,7 +64,7 @@ function Home({ setPage, socket }) {
                 <dialog className="wait-modal" id="wait-modal">
                     Waiting for other player!
                     <br />
-                    Send this <i>{roomCode}</i> to your friend
+                    Send this   <i>{roomCode}</i>   to your friend
                     <form onSubmit={() => socket.emit("terminate-room")} method="dialog">
                         <button id="copy-button" type="button" onClick={copyToClipboard}>
                             Copy
@@ -65,9 +72,13 @@ function Home({ setPage, socket }) {
                         <button autoFocus>Quit</button>
                     </form>
                 </dialog>
-                <dialog className="load-modal" id="load-modal">
-                    LOADING...
-                </dialog>
+            </div>
+            <div id="status-container">
+                <h4 id="status">{(socket !== null && socket.connected && "connected") || "NOT CONNECT TO SERVER"}</h4>
+
+                <a href="https://github.com/PhasitWo/RPS-game" target="blank">
+                    <i class="fa fa-github"></i> github.com/PhasitWo/RPS-game
+                </a>
             </div>
         </>
     );

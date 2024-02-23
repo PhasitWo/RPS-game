@@ -6,10 +6,11 @@ import Battle from "./Battle.jsx";
 function App() {
     const [page, setPage] = useState("Home");
     const [socket, setSocket] = useState(null);
+    const [connected, setConnected] = useState(false);
     const [roomDetail, setRoomDetail] = useState(null);
 
     useEffect(() => {
-        let socket = io("https://rps-game-sgv6.onrender.com");
+        let socket = io("http://localhost:3000");
         socket.on("connect", () => setSocket(socket));
         socket.on("room-terminated", () => {
             popError("The room is terminated");
@@ -20,10 +21,11 @@ function App() {
             setRoomDetail(detail);
         });
         socket.on("server-message", (message) => console.log("[SERVER] " + message));
-        socket.io.on("error", (error) => popError("Cannot Connect to Server"));
+        socket.io.on("error", (error) => {popError("Cannot Connect to Server");console.log(error)});
 
         return () => socket.close(); // on unmount
     }, []);
+
 
     return (
         <>
@@ -37,6 +39,12 @@ function App() {
                     <Battle setPage={setPage} socket={socket} roomDetail={roomDetail} setRoomDetail={setRoomDetail} />
                 )}
             </div>
+            <dialog className="error-modal" id="error-modal">
+                <p id="error-message">Error</p>
+                <form method="dialog">
+                    <button>Close</button>
+                </form>
+            </dialog>
         </>
     );
 }

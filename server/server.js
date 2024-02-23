@@ -5,7 +5,6 @@ let rooms = [];
 
 io.on("connection", (socket) => {
     console.log(`${socket.id} connected to server`);
-    // TODO: battle-rematch event
     socket.on("create-room", (callback) => {
         // create code
         const roomCode = crypto.randomBytes(2).toString("hex");
@@ -13,7 +12,6 @@ io.on("connection", (socket) => {
         socket.join(roomCode);
         callback(roomCode);
         console.log(`room ${roomCode} created`);
-        // TODO: waiting-for-player timeout
     });
 
     socket.on("terminate-room", () => {
@@ -108,7 +106,8 @@ io.on("connection", (socket) => {
             io.to(room.roomCode).emit("server-message", `p1Choice:${p1Choice}  p2Choice:${p2Choice}`);
             // evaluate
             let result;
-            if ((p1Choice === "X" && p2Choice === "X") || p1Choice === p2Choice) result = 0;
+            if (p1Choice === "X" && p2Choice === "X") result = -1;
+            else if (p1Choice === p2Choice) result = 0;
             else if (
                 (p1Choice === "R" && p2Choice === "S") ||
                 (p1Choice === "S" && p2Choice === "P") ||
@@ -122,7 +121,7 @@ io.on("connection", (socket) => {
                 p2Score++;
             }
             // score
-            if (result === 0) {
+            if (result === -1) {
                 io.to(room.roomCode).emit("server-message", `EVEN!`);
                 evenCnt++;
                 if (evenCnt == maxEvenCnt) {
@@ -139,7 +138,7 @@ io.on("connection", (socket) => {
                 [room.player2]: { choice: p2Choice, score: p2Score },
             });
             io.to(room.roomCode).emit("server-message", `start animation`);
-            await new Promise((resolve) => setTimeout(resolve, 4000));
+            await new Promise((resolve) => setTimeout(resolve, 3000));
             io.to(room.roomCode).emit("server-message", `animation ended`);
             // reset choice
             p1Choice = null;
