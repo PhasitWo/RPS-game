@@ -44,6 +44,7 @@ function Battle({ setPage, socket, roomDetail }) {
         socket.on("battle-score", (result) => {
             // animation
             setAnimate(true);
+            setButtonVisible(false);
             setTimeout(() => {
                 setYouImg(mapping[result[socket.id].choice]);
                 setFoeImg(mapping[result[foeID.current].choice]);
@@ -52,7 +53,6 @@ function Battle({ setPage, socket, roomDetail }) {
             setTimeout(() => {
                 setYouScore(result[socket.id].score);
                 setFoeScore(result[foeID.current].score);
-                setButtonVisible(false);
             }, 2000);
         });
         socket.on("battle-rematch", (winnerId, callback) => {
