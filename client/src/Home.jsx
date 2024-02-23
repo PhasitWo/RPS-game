@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function Home({ setPage, socket }) {
+function Home({ setPage, socket , connected}) {
     const [roomCode, setRoomCode] = useState(null);
 
     function createRoom() {
@@ -74,10 +74,9 @@ function Home({ setPage, socket }) {
                 </dialog>
             </div>
             <div id="status-container">
-                <h4 id="status">{(socket !== null && socket.connected && "connected") || "NOT CONNECT TO SERVER"}</h4>
-
+                <h4 id="status">{(connected && "connected") || "NOT CONNECT TO SERVER"}</h4>
                 <a href="https://github.com/PhasitWo/RPS-game" target="blank">
-                    <i class="fa fa-github"></i> github.com/PhasitWo/RPS-game
+                    <i className="fa fa-github"></i> github.com/PhasitWo/RPS-game
                 </a>
             </div>
         </>

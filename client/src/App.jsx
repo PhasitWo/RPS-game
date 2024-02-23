@@ -5,13 +5,16 @@ import Battle from "./Battle.jsx";
 
 function App() {
     const [page, setPage] = useState("Home");
-    const [socket, setSocket] = useState(null);
+    const [socket, setSocket] = useState(null); // can be 'useRef'
+    const [roomDetail, setRoomDetail] = useState(null); // can be 'useRef'
     const [connected, setConnected] = useState(false);
-    const [roomDetail, setRoomDetail] = useState(null);
 
     useEffect(() => {
         let socket = io("https://rps-game-sgv6.onrender.com");
-        socket.on("connect", () => setSocket(socket));
+        socket.on("connect", () => {
+            setSocket(socket);
+            setConnected(true);
+        });
         socket.on("room-terminated", () => {
             popError("The room is terminated");
             setPage("Home");
@@ -21,11 +24,14 @@ function App() {
             setRoomDetail(detail);
         });
         socket.on("server-message", (message) => console.log("[SERVER] " + message));
-        socket.io.on("error", (error) => {popError("Cannot Connect to Server");console.log(error)});
+        socket.io.on("error", (error) => {
+            popError("Cannot Connect to Server");
+            setConnected(false);
+            console.log(error);
+        });
 
         return () => socket.close(); // on unmount
     }, []);
-
 
     return (
         <>
@@ -34,7 +40,7 @@ function App() {
                 <button onClick={() => setPage("Battle")}>Battle</button>
             </div> */}
             <div className="content">
-                {page === "Home" && <Home setPage={setPage} socket={socket} />}
+                {page === "Home" && <Home setPage={setPage} socket={socket} connected={connected} />}
                 {page === "Battle" && (
                     <Battle setPage={setPage} socket={socket} roomDetail={roomDetail} setRoomDetail={setRoomDetail} />
                 )}
