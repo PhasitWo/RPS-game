@@ -6,21 +6,28 @@ function Home({ setPage, socket , connected}) {
     function createRoom() {
         socket.emit("create-room", (roomCode) => {
             setRoomCode(roomCode);
-            const waitModal = document.getElementById("wait-modal");
+            const waitModal = document.getElementById("create-modal");
             waitModal.showModal();
         });
     }
 
-    function copyToClipboard() {
+    function copyCodeToClipboard() {
         navigator.clipboard.writeText(roomCode);
+        alert(`"${roomCode}" is copied to your clipboard`)
     }
 
-    async function pasteFromClipboard() {
-        const codeField = document.getElementById("code");
-        let clipboardText = await navigator.clipboard.readText();
-        if (codeField.value != "" || clipboardText.length !== 4) return;
-        codeField.value = clipboardText;
+    function copyLinkToClipboard() {
+        const url = window.location.origin + "/?code=" + roomCode
+        navigator.clipboard.writeText(url);
+        alert(`"${url}" is copied to your clipboard`);
     }
+    // no need anymore as we have copy-link function
+    // async function pasteFromClipboard() {
+    //     const codeField = document.getElementById("code");
+    //     let clipboardText = await navigator.clipboard.readText();
+    //     if (codeField.value != "" || clipboardText.length !== 4) return;
+    //     codeField.value = clipboardText;
+    // }
 
     function joinRoom(e) {
         e.preventDefault();
@@ -44,12 +51,11 @@ function Home({ setPage, socket , connected}) {
                 >
                     Join Your Friend!
                     <form onSubmit={joinRoom} method="dialog">
-                        
                         <input
                             id="code"
                             name="code"
                             placeholder="code"
-                            onFocus={pasteFromClipboard}
+                            // onFocus={pasteFromClipboard}
                             autoComplete="off"
                             required
                         ></input>
@@ -61,15 +67,18 @@ function Home({ setPage, socket , connected}) {
                         </button>
                     </form>
                 </dialog>
-                <dialog className="wait-modal" id="wait-modal">
+                <dialog className="create-modal" id="create-modal">
                     Waiting for other player!
                     <br />
-                    Send this   <i>{roomCode}</i>   to your friend
+                    Send this <i>{roomCode}</i> to your friend
                     <form onSubmit={() => socket.emit("terminate-room")} method="dialog">
-                        <button id="copy-button" type="button" onClick={copyToClipboard}>
-                            Copy
+                        <button id="copy-code-button" type="button" onClick={copyCodeToClipboard}>
+                            Copy Code
                         </button>
-                        <button autoFocus>Quit</button>
+                        <button id="copy-link-button" type="button" onClick={copyLinkToClipboard}>
+                            Copy Link
+                        </button>
+                        <button >Quit</button>
                     </form>
                 </dialog>
             </div>
