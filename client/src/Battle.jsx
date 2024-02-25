@@ -110,7 +110,7 @@ function Battle({ setPage, socket, roomDetail }) {
                 {/* cache image */}
                 <img src={rockImg} style={{ display: "none", width: "0px", height: "0px" }} />
                 <img src={paperImg} style={{ display: "none", width: "0px", height: "0px" }} />
-                <img src={scissorsImg} style={{ display: "none", width: "0px", height: "0px" }} />
+                <img src={scissorsImg} style={{ display: "none", width: "0px", height: "0px" }} /> 
             </div>
             <div id="button-panel">
                 <CustomButton
