@@ -52,7 +52,6 @@ function App() {
         const code = param.get("code");
         if (connected && code !== null && !autoJoined.current) {
             autoJoined.current = true;
-            document.getElementById("join-modal").showModal();
             document.getElementById("code").value = code;
             document.querySelector("#join-modal button[type=submit]").click();
         }

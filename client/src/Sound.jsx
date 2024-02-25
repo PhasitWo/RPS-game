@@ -8,6 +8,7 @@ import { useEffect } from "react";
 export default function Sound() {
     // set sound volume
     useEffect(() => {
+        document.getElementById("you-score-sound").volume = 0.8;
         document.getElementById("foe-score-sound").volume = 0.7;
         document.getElementById("you-win-sound").volume = 0.4;
         document.getElementById("you-lose-sound").volume = 0.6;
