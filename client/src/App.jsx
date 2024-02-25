@@ -34,10 +34,17 @@ function App() {
         });
         // for debug
         // socket.on("server-message", (message) => console.log("[SERVER] " + message));
-        // window.onclick = () => {setPage("Battle"); setRoomDetail({player1:"1234", player2: "4321"})}
+        // window.onclick = () => {
+        //     setPage("Battle"); setRoomDetail({player1:"1234", player2: "4321"})
+        //     setTimeout(playSound("click-sound"),0)
+        //     setTimeout(playSound("you-score-sound"),1000)
+        //     setTimeout(playSound("foe-score-sound"),2000)
+        //     setTimeout(playSound("you-win-sound"), 3000);
+        //     setTimeout(playSound("you-lose-sound"), 4000);
+        // };
         return () => socket.close(); // on unmount
     }, []);
-    
+
     // join by link
     useEffect(() => {
         const queryString = window.location.search;
