@@ -12,24 +12,12 @@ function App() {
     const [connected, setConnected] = useState(false);
     const autoJoined = useRef(false);
 
+    //onmount
     useEffect(() => {
         let socket = io("https://rps-game-sgv6.onrender.com");
         socket.on("connect", () => {
             setSocket(socket);
             setConnected(true);
-            setTimeout(() => {
-                // wait 500ms -> fixed socket interpreted as null
-                // if there is a url param
-                const queryString = window.location.search;
-                const param = new URLSearchParams(queryString);
-                const code = param.get("code");
-                if (code !== null && !autoJoined.current) {
-                    autoJoined.current = true;
-                    document.getElementById("join-modal").showModal();
-                    document.getElementById("code").value = code;
-                    document.querySelector("#join-modal button[type=submit]").click();
-                }
-            }, 500);
         });
         socket.on("room-terminated", () => {
             popError("The room is terminated");
@@ -49,6 +37,19 @@ function App() {
         // window.onclick = () => {setPage("Battle"); setRoomDetail({player1:"1234", player2: "4321"})}
         return () => socket.close(); // on unmount
     }, []);
+    
+    // join by link
+    useEffect(() => {
+        const queryString = window.location.search;
+        const param = new URLSearchParams(queryString);
+        const code = param.get("code");
+        if (connected && code !== null && !autoJoined.current) {
+            autoJoined.current = true;
+            document.getElementById("join-modal").showModal();
+            document.getElementById("code").value = code;
+            document.querySelector("#join-modal button[type=submit]").click();
+        }
+    }, [connected]);
 
     return (
         <>
