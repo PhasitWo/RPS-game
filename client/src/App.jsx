@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import Home from "./Home.jsx";
 import Battle from "./Battle.jsx";
-import Sound from "./Sound.jsx"
+import Sound from "./Sound.jsx";
+import CustomButton from "./CustomButton.jsx";
 
 function App() {
     const [page, setPage] = useState("Home");
@@ -38,13 +39,14 @@ function App() {
             setPage("Battle");
             setRoomDetail(detail);
         });
-        socket.on("server-message", (message) => console.log("[SERVER] " + message));
         socket.io.on("error", (error) => {
-            popError("Cannot Connect to Server");
+            popError("Unable to establish connection with game server");
             setConnected(false);
             console.log(error);
         });
-
+        // for debug
+        // socket.on("server-message", (message) => console.log("[SERVER] " + message));
+        // window.onclick = () => {setPage("Battle"); setRoomDetail({player1:"1234", player2: "4321"})}
         return () => socket.close(); // on unmount
     }, []);
 
@@ -59,7 +61,7 @@ function App() {
             <dialog className="error-modal" id="error-modal">
                 <p id="error-message">Error</p>
                 <form method="dialog">
-                    <button onMouseDown={playSound("click-sound")}>Close</button>
+                    <CustomButton>Close</CustomButton>
                 </form>
             </dialog>
             <Sound />

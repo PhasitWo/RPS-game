@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CustomButton from "./CustomButton.jsx";
 
 function Home({ setPage, socket, connected }) {
     const [roomCode, setRoomCode] = useState(null);
@@ -41,16 +42,9 @@ function Home({ setPage, socket, connected }) {
         <>
             <div className="home-container">
                 <h2>Rock Paper Scissors</h2>
-                <button onClick={createRoom} onMouseDown={playSound("click-sound")}>
-                    Create Room
-                </button>
+                <CustomButton onClick={createRoom}>Create Room</CustomButton>
                 <br />
-                <button
-                    onClick={() => document.getElementById("join-modal").showModal()}
-                    onMouseDown={playSound("click-sound")}
-                >
-                    Join Room
-                </button>
+                <CustomButton onClick={() => document.getElementById("join-modal").showModal()}>Join Room</CustomButton>
                 <dialog
                     className="join-modal"
                     id="join-modal"
@@ -66,16 +60,12 @@ function Home({ setPage, socket, connected }) {
                             autoComplete="off"
                             required
                         ></input>
-                        <button type="submit" autoFocus onMouseDown={playSound("click-sound")}>
+                        <CustomButton type="submit" autoFocus>
                             Join
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => document.getElementById("join-modal").close()}
-                            onMouseDown={playSound("click-sound")}
-                        >
+                        </CustomButton>
+                        <CustomButton type="button" onClick={() => document.getElementById("join-modal").close()}>
                             Close
-                        </button>
+                        </CustomButton>
                     </form>
                 </dialog>
                 <dialog className="create-modal" id="create-modal">
@@ -83,28 +73,18 @@ function Home({ setPage, socket, connected }) {
                     <br />
                     Send this <i>{roomCode}</i> to your friend
                     <form onSubmit={() => socket.emit("terminate-room")} method="dialog">
-                        <button
-                            id="copy-code-button"
-                            type="button"
-                            onClick={copyCodeToClipboard}
-                            onMouseDown={playSound("click-sound")}
-                        >
+                        <CustomButton id="copy-code-button" type="button" onClick={copyCodeToClipboard}>
                             Copy Code
-                        </button>
-                        <button
-                            id="copy-link-button"
-                            type="button"
-                            onClick={copyLinkToClipboard}
-                            onMouseDown={playSound("click-sound")}
-                        >
+                        </CustomButton>
+                        <CustomButton id="copy-link-button" type="button" onClick={copyLinkToClipboard}>
                             Copy Link
-                        </button>
-                        <button onMouseDown={playSound("click-sound")}>Quit</button>
+                        </CustomButton>
+                        <CustomButton autoFocus>Quit</CustomButton>
                     </form>
                 </dialog>
             </div>
             <div id="status-container">
-                <h4 id="status">{(connected && "connected") || "NOT CONNECT TO SERVER"}</h4>
+                <h5 id="status">{(connected && "connected") || "Connecting to game server..."}</h5>
                 <a href="https://github.com/PhasitWo/RPS-game" target="blank">
                     <i className="fa fa-github"></i> github.com/PhasitWo/RPS-game
                 </a>

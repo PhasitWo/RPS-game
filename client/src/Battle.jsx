@@ -3,6 +3,7 @@ import "./battle.css";
 import rockImg from "./assets/rock.png";
 import paperImg from "./assets/paper.png";
 import scissorsImg from "./assets/scissors.png";
+import CustomButton from "./CustomButton.jsx";
 
 const mapping = {
     R: rockImg,
@@ -10,8 +11,6 @@ const mapping = {
     S: scissorsImg,
     X: null,
 };
-
-const youScoreSound = playSound("you-score-sound");
 
 function Battle({ setPage, socket, roomDetail }) {
     // battle
@@ -108,35 +107,36 @@ function Battle({ setPage, socket, roomDetail }) {
             <div id="animation-space">
                 <img id="you-img" className={animate ? "you-animate" : undefined} src={youImg} />
                 <img id="foe-img" className={animate ? "foe-animate" : undefined} src={foeImg} />
+                {/* cache image */}
+                <img src={rockImg} style={{ display: "none", width: "0px", height: "0px" }} />
+                <img src={paperImg} style={{ display: "none", width: "0px", height: "0px" }} />
+                <img src={scissorsImg} style={{ display: "none", width: "0px", height: "0px" }} />
             </div>
             <div id="button-panel">
-                <button
+                <CustomButton
                     className={!buttonVisible ? "gray-out-button" : undefined}
                     disabled={!buttonVisible}
                     id="R"
-                    onMouseDown={playSound("click-sound")}
                 >
                     Rock
-                </button>
-                <button
+                </CustomButton>
+                <CustomButton
                     className={!buttonVisible ? "gray-out-button" : undefined}
                     disabled={!buttonVisible}
                     id="P"
-                    onMouseDown={playSound("click-sound")}
                 >
                     Paper
-                </button>
-                <button
+                </CustomButton>
+                <CustomButton
                     className={!buttonVisible ? "gray-out-button" : undefined}
                     disabled={!buttonVisible}
                     id="S"
-                    onMouseDown={playSound("click-sound")}
                 >
                     Scissors
-                </button>
+                </CustomButton>
             </div>
             <div id="quit-wrapper">
-                <button
+                <CustomButton
                     id="quit"
                     onClick={() => {
                         socket.emit("terminate-room");
@@ -144,7 +144,7 @@ function Battle({ setPage, socket, roomDetail }) {
                     }}
                 >
                     QUIT
-                </button>
+                </CustomButton>
             </div>
             <dialog className="rematch-modal" id="rematch-modal">
                 {(youWin && "YOU WIN!") || "YOU LOSE :("}
@@ -153,15 +153,10 @@ function Battle({ setPage, socket, roomDetail }) {
                 <br />
                 {reCounter}
                 <form onSubmit={() => socket.emit("terminate-room")} method="dialog">
-                    <button
-                        id="rematch-button"
-                        type="button"
-                        style={{ display: rematch && "none" }}
-                        onMouseDown={playSound("click-sound")}
-                    >
+                    <CustomButton id="rematch-button" type="button" style={{ display: rematch && "none" }}>
                         Rematch
-                    </button>
-                    <button onMouseDown={playSound("click-sound")}>Quit</button>
+                    </CustomButton>
+                    <CustomButton>Quit</CustomButton>
                 </form>
             </dialog>
         </>
